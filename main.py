@@ -27,7 +27,8 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./notizen.db")
 if DATABASE_URL.startswith("sqlite") and os.path.isdir("/data") and os.access("/data", os.W_OK):
     DATABASE_URL = "sqlite:////data/notizen.db"
 
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+ALLOWED_ORIGINS_RAW = os.getenv("ALLOWED_ORIGINS", "*")
+ALLOWED_ORIGINS = [o.strip() for o in ALLOWED_ORIGINS_RAW.split(",") if o.strip()] or ["*"]
 
 # ── DB Setup ──────────────────────────────────────────────────────────────────
 engine = create_engine(
@@ -64,7 +65,7 @@ class Notiz(Base):
 Base.metadata.create_all(bind=engine)
 
 # ── Auth Helpers ──────────────────────────────────────────────────────────────
-pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_ctx = CryptContext(schemes=["bcrypt"], deprecated="auto", bcrypt__rounds=12)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 def hash_password(pw: str) -> str:
