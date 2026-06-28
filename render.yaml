@@ -9,9 +9,3 @@ services:
         generateValue: true
       - key: ALLOWED_ORIGINS
         value: https://Michdo93.github.io
-      - key: RENDER
-        value: true
-    disk:
-      name: notizen-data
-      mountPath: /data
-      sizeGB: 1
